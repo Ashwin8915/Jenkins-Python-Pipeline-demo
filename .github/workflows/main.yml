@@ -19,6 +19,19 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Set the Python path
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Run tests
         run: |
-          pytest tests
+          pytest tests --cov=app --cov-report=xml
+          
+
+      # GITHUB_WORKSPACE : it is a default directory on the runner where your repository is checked out
+      # It is automatically set by Github Actions and points to the root of your repoistory 
+      # In this Workflow, we are adding the GITHUB_WORKSPACE to the PYTHONPATH enviroment variable
+      # so that Python can locate your modules and packages during testing
+
+      #here $GITHUB_ENV is a special file that Github actions
+      # uses to set environment variables for subsequent steps in the workflow
+
