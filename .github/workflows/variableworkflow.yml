@@ -1,0 +1,47 @@
+name: variable demo workflow
+
+on: push
+
+env: # this section is created to declare variable and is created at workflow level
+  # this variable can be used in any job or step in the workflow
+  Python_version: '3.13'
+
+jobs:
+  job_python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code on runner VM
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.Python_version }}
+
+      - name: Print python version
+        run: python --version
+
+  job_python2:
+    env:
+      Python_version_2: '3.11'
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code on runner VM
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.Python_version_2 }}
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set the Python path
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: |
+          pytest tests --cov=app --cov-report=xml
